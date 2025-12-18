@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:3000/municipios";
+const API = "https://municipios-senac-122.onrender.com/municipios";
 let limit = 3;
 let offset = 0;
 let lastScrollTop = 0;
