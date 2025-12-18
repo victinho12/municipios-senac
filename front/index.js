@@ -21,12 +21,12 @@ btnAlterar.addEventListener("click", salvarMudanca);
 
 btnMaisMunicipios.addEventListener("click", async () => {
   offset = offset + 3;
-  carregarMunicipiosMenosMais(offset)
-});
-btnMenosMunicipios.addEventListener("click", async () =>{
-  offset = offset -3;
   carregarMunicipiosMenosMais(offset);
-})
+});
+btnMenosMunicipios.addEventListener("click", async () => {
+  offset -= 3;
+  carregarMunicipiosMenosMais(offset);
+});
 fechar.addEventListener("click", () => {
   alterar.style.display = "none";
   listagem.style.pointerEvents = "auto";
@@ -34,8 +34,12 @@ fechar.addEventListener("click", () => {
 
 async function carregarMunicipiosMenosMais(offset) {
   try {
-    const resposta = await fetch(`${API}/?limit=${limit}&offset=${offset}`);
-    const dados = await resposta.json();  
+    const resposta = await fetch(`${API}/?limit=${limit}&offset=${offset}`, {
+      headers: {
+        "minha-chave": API_CLIENT_KEY,
+      },
+    });
+    const dados = await resposta.json();
 
     listagem.innerHTML = ""; // limpa
 
@@ -52,8 +56,8 @@ async function carregarMunicipios() {
   try {
     const resposta = await fetch(`${API}/?limit=${limit}`, {
       headers: {
-        "minha-chave": API_CLIENT_KEY
-      }
+        "minha-chave": API_CLIENT_KEY,
+      },
     });
     const dados = await resposta.json();
 
@@ -96,7 +100,10 @@ async function inserirMunicipio() {
   try {
     const resposta = await fetch(API, {
       method: "POST",
-      headers: { "Content-Type": "application/json", "minha-chave": API_CLIENT_KEY},
+      headers: {
+        "Content-Type": "application/json",
+        "minha-chave": API_CLIENT_KEY,
+      },
       body: JSON.stringify(novoMunicipio),
     });
 
@@ -113,7 +120,10 @@ async function inserirMunicipio() {
 async function deletar(id) {
   try {
     const resposta = await fetch(`${API}/${id}`, {
-      method: "DELETE", "minha-chave": API_CLIENT_KEY
+      method: "DELETE",
+      headers: {
+      "minha-chave": API_CLIENT_KEY,
+      }
     });
     carregarMunicipios();
   } catch (err) {
@@ -125,7 +135,9 @@ async function alterarJanela(id) {
   alterar.style.display = "block";
   listagem.style.pointerEvents = "none";
   idEditar = id;
-  const resposta = await fetch(`${API}/${id}`);
+  const resposta = await fetch(`${API}/${id}`,{
+    headers: {"minha-chave": API_CLIENT_KEY}
+  });
   const municipio = await resposta.json();
   document.getElementById("nomeUf").value = municipio.nome;
   document.getElementById("estadoUf").value = municipio.estado;
@@ -142,7 +154,7 @@ async function salvarMudanca() {
   try {
     await fetch(`${API}/${idEditar}`, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "minha-chave": API_CLIENT_KEY },
       body: JSON.stringify(novoMunicipio),
     });
     alterar.style.display = "none";
